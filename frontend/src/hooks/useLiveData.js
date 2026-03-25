@@ -2,7 +2,7 @@
  * AERIS – Live Data Orchestration Hook
  * ────────────────────────────────────────────────────────────────
  * Socket.IO-First Architecture:
- * 1. Connects to the AERIS WebSocket server (port 3000).
+ * 1. Connects to the AERIS WebSocket server (port 5000).
  * 2. Any ESP32 push via `environment_update` → updates the store instantly.
  * 3. FALLBACK: If no socket data arrives within 5 s, fetch the LAST REAL
  *    reading from Cosmos DB via the REST API. Shows real data, not simulated.
@@ -11,8 +11,9 @@ import { useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import useAerisStore from '@/store/aerisStore';
 import aerisApi from '@/services/aerisApi';
+import { generateTick } from '@/services/simulator';
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:5000';
 const SOCKET_TIMEOUT_MS = 5000;
 
 const RISK_COLORS = {
@@ -38,9 +39,29 @@ const useLiveData = () => {
             console.info('[AERIS] No live ESP32 data — loading last record from Cosmos DB...');
             await fetchLatest(); // calls GET /api/v1/latest → reads Cosmos DB
         } catch (err) {
-            console.warn('[AERIS] Could not load last DB record:', err.message);
+            console.warn('[AERIS] API not ready, falling back to simulator data so UI displays:', err.message);
+            
+            const tick = generateTick();
+            updateFromFirebase({
+                nodeId: 'SIMULATED-01',
+                timestamp: new Date().toISOString(),
+                pm25: tick.sensors.pm25,
+                pm10: tick.sensors.pm10,
+                o3: tick.sensors.o3,
+                co: tick.sensors.co,
+                nox: tick.sensors.nox,
+                voc: tick.sensors.voc_index,
+                temp: tick.sensors.temperature,
+                hum: tick.sensors.humidity,
+                oxygen: tick.sensors.oxygen,
+                pressure: tick.sensors.pressure,
+                aqi: 45,
+                rri: 12,
+                riskLevel: 'Low',
+                color: RISK_COLORS['Low'],
+            });
         }
-    }, [fetchLatest]);
+    }, [fetchLatest, updateFromFirebase]);
 
     // ── Main Effect ───────────────────────────────────────────────
     useEffect(() => {

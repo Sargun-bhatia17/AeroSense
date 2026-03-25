@@ -1,12 +1,12 @@
 {
-<<<<<<< HEAD
   "name": "aerospace-backend",
   "version": "1.0.0",
+  "description": "Hyperlocal Air Quality Intelligence System — data fusion and decision engine",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node app/main.js",
-    "start": "node app/main.js"
+    "start": "node app/main.js",
+    "dev": "node --watch app/main.js"
   },
   "dependencies": {
     "@azure/cosmos": "^4.9.1",
@@ -20,20 +20,5 @@
     "jsonwebtoken": "^9.0.3",
     "socket.io": "^4.8.3",
     "zod": "^4.3.6"
-=======
-  "name": "hyperlocal-aqi-backend",
-  "version": "1.0.0",
-  "description": "Hyperlocal Air Quality Intelligence System — data fusion and decision engine",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
-  },
-  "dependencies": {
-    "axios": "^1.7.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.0",
-    "express": "^4.21.0"
->>>>>>> dd4237d13babee78979e713b0eec1260570a21a9
   }
 }
