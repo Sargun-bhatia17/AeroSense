@@ -1,0 +1,11 @@
+/* Ensure content stays above any overlays */
+.app-shell-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.sidebar-container {
+  position: relative;
+  z-index: 50;
+}
